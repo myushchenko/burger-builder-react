@@ -9,6 +9,7 @@ import Input from "../../../components/UI/Input/Input";
 import { connect } from "react-redux";
 import withErrorHandler from "../../../hoc/withErrorHandler/withErrorHandler";
 import * as orderActions from "../../../store/actions/index";
+import { updateForm } from "../../../shared/utility";
 
 class ContactData extends Component {
   state = {
@@ -48,6 +49,7 @@ class ContactData extends Component {
         value: "",
         validation: {
           required: true,
+          isNumeric: true,
           minLength: 5,
           maxLength: 5
         },
@@ -75,7 +77,8 @@ class ContactData extends Component {
         },
         value: "",
         validation: {
-          required: true
+          required: true,
+          isEmail: true
         },
         valid: false,
         touched: false
@@ -111,33 +114,12 @@ class ContactData extends Component {
     this.props.onOrderBurger(order, this.props.token);
   };
 
-  checkValidity(value, rules) {
-    let isValid = true;
-    if (!rules) {
-      return isValid;
-    }
-    if (rules.required) {
-      isValid = value.trim() !== "" && isValid;
-    }
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid;
-    }
-    if (rules.maxLength) {
-      isValid = value.length <= rules.maxLength && isValid;
-    }
-    return isValid;
-  }
-
   inputChangedHandler = (event, inputKey) => {
-    const updatedOrderForm = { ...this.state.orderForm };
-    const updatedFormEl = { ...updatedOrderForm[inputKey] };
-    updatedFormEl.value = event.target.value;
-    updatedFormEl.valid = this.checkValidity(
-      updatedFormEl.value,
-      updatedFormEl.validation
+    const updatedOrderForm = updateForm(
+      this.state.orderForm,
+      inputKey,
+      event.target.value
     );
-    updatedFormEl.touched = true;
-    updatedOrderForm[inputKey] = updatedFormEl;
 
     let formIsValid = true;
     for (const inputKey in updatedOrderForm) {

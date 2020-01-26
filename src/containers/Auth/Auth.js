@@ -8,6 +8,7 @@ import Spinner from "../../components/UI/Spinner/Spinner";
 import classes from "./Auth.module.css";
 import * as actions from "../../store/actions/index";
 import { Redirect } from "react-router-dom";
+import { updateForm } from "../../shared/utility";
 
 class Auth extends Component {
   state = {
@@ -50,40 +51,12 @@ class Auth extends Component {
     }
   }
 
-  checkValidity(value, rules) {
-    let isValid = true;
-    if (!rules) {
-      return isValid;
-    }
-    if (rules.required) {
-      isValid = value.trim() !== "" && isValid;
-    }
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid;
-    }
-    if (rules.maxLength) {
-      isValid = value.length <= rules.maxLength && isValid;
-    }
-    if (rules.isEmail) {
-      const pattern = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}/gim;
-      isValid = pattern.test(value) && isValid;
-    }
-    return isValid;
-  }
-
   inputChangedHandler = (event, inputKey) => {
-    const updatedControls = {
-      ...this.state.controls,
-      [inputKey]: {
-        ...this.state.controls[inputKey],
-        value: event.target.value,
-        valid: this.checkValidity(
-          event.target.value,
-          this.state.controls[inputKey].validation
-        ),
-        touched: true
-      }
-    };
+    const updatedControls = updateForm(
+      this.state.controls,
+      inputKey,
+      event.target.value
+    );
 
     this.setState({ controls: updatedControls });
   };

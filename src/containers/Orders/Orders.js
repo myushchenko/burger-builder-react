@@ -8,6 +8,7 @@ import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import * as actions from "../../store/actions/index";
 import { connect } from "react-redux";
 import Spinner from "../../components/UI/Spinner/Spinner";
+import classes from "./Orders.module.css";
 
 class Orders extends Component {
   componentDidMount() {
@@ -17,13 +18,17 @@ class Orders extends Component {
   render() {
     let orders = <Spinner />;
     if (!this.props.loading) {
-      orders = this.props.orders.map(order => (
-        <Order
-          key={order.id}
-          ingredients={order.ingredients}
-          price={order.price}
-        />
-      ));
+      if (this.props.orders && this.props.orders.length) {
+        orders = this.props.orders.map(order => (
+          <Order
+            key={order.id}
+            ingredients={order.ingredients}
+            price={order.price}
+          />
+        ));
+      } else {
+        orders = <p className={classes.Empty}>You don't have orders!</p>;
+      }
     }
     return <div>{orders}</div>;
   }
