@@ -1,38 +1,38 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
 
+import * as actions from "../../store/actions/index";
 import axios from "../../axios-orders";
 
-//import classes from "./Orders.module.css";
 import Order from "../../components/Order/Order";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
-import * as actions from "../../store/actions/index";
-import { connect } from "react-redux";
 import Spinner from "../../components/UI/Spinner/Spinner";
+
 import classes from "./Orders.module.css";
 
-class Orders extends Component {
-  componentDidMount() {
-    this.props.onFetchOrders(this.props.token, this.props.userId);
-  }
+const Orders = props => {
+  const { onFetchOrders, token, userId } = props;
 
-  render() {
-    let orders = <Spinner />;
-    if (!this.props.loading) {
-      if (this.props.orders && this.props.orders.length) {
-        orders = this.props.orders.map(order => (
-          <Order
-            key={order.id}
-            ingredients={order.ingredients}
-            price={order.price}
-          />
-        ));
-      } else {
-        orders = <p className={classes.Empty}>You don't have orders!</p>;
-      }
+  useEffect(() => {
+    onFetchOrders(token, userId);
+  }, [onFetchOrders, token, userId]);
+
+  let orders = <Spinner />;
+  if (!props.loading) {
+    if (props.orders && props.orders.length) {
+      orders = props.orders.map(order => (
+        <Order
+          key={order.id}
+          ingredients={order.ingredients}
+          price={order.price}
+        />
+      ));
+    } else {
+      orders = <p className={classes.Empty}>You don't have orders!</p>;
     }
-    return <div>{orders}</div>;
   }
-}
+  return <div>{orders}</div>;
+};
 
 const mapStateToProps = state => {
   return {
